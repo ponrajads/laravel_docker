@@ -20,6 +20,9 @@ WORKDIR /var/www/html
 # Copy the application files to the container
 COPY . /var/www/html
 
+# Copy .env file into the container
+COPY .env /var/www/html/.env
+
 # Set appropriate permissions for the Laravel directories
 RUN chown -R www-data:www-data /var/www/html \
     && chmod -R 777 /var/www/html/storage /var/www/html/bootstrap/cache
