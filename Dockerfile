@@ -1,28 +1,37 @@
-FROM php:8.2-fpm
+# Use an official PHP image with Apache and FPM installed
+FROM php:8.1-apache
 
-# Set working directory
-WORKDIR /var/www
-
-# Install dependencies
+# Install required dependencies (e.g., for Laravel)
 RUN apt-get update && apt-get install -y \
-    git \
-    unzip \
-    libpq-dev \
-    libzip-dev \
-    libjpeg-dev \
     libpng-dev \
+    libjpeg62-turbo-dev \
     libfreetype6-dev \
-    && docker-php-ext-install pdo pdo_mysql zip gd
+    zip \
+    git \
+    && docker-php-ext-configure gd --with-freetype --with-jpeg \
+    && docker-php-ext-install gd pdo pdo_mysql
 
-# Install Composer
-COPY --from=composer:latest /usr/bin/composer /usr/bin/composer
+# Enable Apache modules (rewrite, headers, etc.)
+RUN a2enmod rewrite headers
 
-# Copy application files
-COPY . /var/www
+# Set the working directory in the container
+WORKDIR /var/www/html
 
-# Set permissions
-RUN chown -R www-data:www-data /var/www
+# Copy the application files to the container
+COPY . /var/www/html
 
-# Expose port 9000 and start PHP-FPM
-EXPOSE 9000
-CMD ["php-fpm"]
+# Set appropriate permissions for the Laravel directories
+RUN chown -R www-data:www-data /var/www/html \
+    && chmod -R 777 /var/www/html/storage /var/www/html/bootstrap/cache
+
+# Install Composer (if needed for Laravel)
+RUN curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/local/bin --filename=composer
+
+
+# Expose port 80 for Apache
+EXPOSE 80
+
+
+# Start Apache service
+CMD ["apache2-foreground"]
+
