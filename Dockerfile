@@ -36,9 +36,6 @@ RUN composer install
 # Expose port 80 for Apache
 EXPOSE 80
 
-# Copy Apache configuration file (if necessary)
-COPY ./apache/000-default.conf /etc/apache2/sites-available/000-default.conf
-
 # Start Apache service
 CMD ["apache2-foreground"]
 
