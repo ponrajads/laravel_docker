@@ -30,8 +30,6 @@ RUN chown -R www-data:www-data /var/www/html \
 # Copy Apache configuration file (if necessary)
 COPY /var/www/html/000-default.conf /etc/apache2/sites-available/000-default.conf
 
-# Install Composer (if needed for Laravel)
-RUN curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/local/bin --filename=composer
 
 # Expose port 80 for Apache
 EXPOSE 80
