@@ -30,6 +30,9 @@ COPY .env /var/www/html/.env
 RUN chown -R www-data:www-data /var/www/html \
     && chmod -R 775 /var/www/html/storage /var/www/html/bootstrap/cache
 
+# Copy Apache configuration file (if necessary)
+COPY /var/www/html/000-default.conf /etc/apache2/sites-available/000-default.conf
+
 # Install Composer (if needed for Laravel)
 RUN curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/local/bin --filename=composer
 
