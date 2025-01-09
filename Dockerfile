@@ -17,21 +17,33 @@ RUN a2enmod rewrite headers
 # Set the working directory in the container
 WORKDIR /var/www/html
 
-# Copy the application files to the container
+# Create the custom DocumentRoot directory
+RUN mkdir -p /var/www/html
+
+# Copy the application files to the custom DocumentRoot
 COPY . /var/www/html
 
-# Copy .env file into the container
+# Copy the .env file into the container
 COPY .env /var/www/html/.env
 
 # Set appropriate permissions for the Laravel directories
 RUN chown -R www-data:www-data /var/www/html \
-    && chmod -R 777 /var/www/html/storage /var/www/html/bootstrap/cache
+    && chmod -R 775 /var/www/html/storage /var/www/html/bootstrap/cache
 
 # Install Composer (if needed for Laravel)
 RUN curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/local/bin --filename=composer
 
 # Install Laravel dependencies
 RUN composer install
+
+# Copy a custom Apache virtual host configuration file
+COPY ./apache/000-default.conf /etc/apache2/sites-available/000-default.conf
+
+# Enable the custom site configuration
+RUN a2ensite 000-default.conf
+
+# Disable the default Apache site configuration (if necessary)
+RUN a2dissite 000-default
 
 # Expose port 80 for Apache
 EXPOSE 80
