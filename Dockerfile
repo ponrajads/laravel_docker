@@ -36,12 +36,6 @@ RUN curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/local
 # Install Laravel dependencies
 RUN composer install
 
-# Enable the custom site configuration
-RUN a2ensite 000-default.conf
-
-# Disable the default Apache site configuration (if necessary)
-RUN a2dissite 000-default
-
 # Expose port 80 for Apache
 EXPOSE 80
 
