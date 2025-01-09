@@ -30,6 +30,8 @@ RUN chown -R www-data:www-data /var/www/html \
 # Install Composer (if needed for Laravel)
 RUN curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/local/bin --filename=composer
 
+# Install Laravel dependencies
+RUN composer install
 
 # Expose port 80 for Apache
 EXPOSE 80
