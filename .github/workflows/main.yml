@@ -1,0 +1,36 @@
+name: CI
+on:
+  push:
+    branches: [ main ]
+  workflow_dispatch:
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+    - name: Checkout Repository
+      uses: actions/checkout@v2
+
+    - name: Get Short Git Commit Hash
+      id: vars
+      run: echo "COMMIT_HASH=$(git rev-parse --short HEAD)" >> $GITHUB_ENV
+
+    - name: Prepare Environment File
+      run: |
+        echo "APP_ENV=production" > .env
+        echo "APP_KEY=base64:$(openssl rand -base64 32)" >> .env
+        echo "DB_HOST=database_host" >> .env
+        echo "DB_PORT=3306" >> .env
+        echo "DB_DATABASE=your_database" >> .env
+        echo "DB_USERNAME=your_username" >> .env
+        echo "DB_PASSWORD=your_password" >> .env
+
+    - name: Build and Push Docker Image
+      env:
+        DOCKER_USERNAME: ${{ secrets.DOCKER_USERNAME }}
+        DOCKER_PASSWORD: ${{ secrets.DOCKER_PASSWORD }}
+        COMMIT_HASH: ${{ env.COMMIT_HASH }}
+      run: |
+        # Copy the .env file into the Docker context
+        docker build -t $DOCKER_USERNAME/laravel-docker:$COMMIT_HASH .
+        echo $DOCKER_PASSWORD | docker login -u $DOCKER_USERNAME --password-stdin
+        docker push $DOCKER_USERNAME/laravel-docker:$COMMIT_HASH
