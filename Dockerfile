@@ -23,9 +23,6 @@ RUN mkdir -p /var/www/html
 # Copy the application files to the custom DocumentRoot
 COPY . /var/www/html
 
-# Copy the .env file into the container
-COPY .env /var/www/html/.env
-
 # Set appropriate permissions for the Laravel directories
 RUN chown -R www-data:www-data /var/www/html \
     && chmod -R 775 /var/www/html/storage /var/www/html/bootstrap/cache
