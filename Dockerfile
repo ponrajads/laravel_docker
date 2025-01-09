@@ -36,8 +36,6 @@ RUN curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/local
 # Install Laravel dependencies
 RUN composer install
 
-COPY ./apache/000-default.conf /etc/apache2/sites-available/000-default.conf
-
 # Enable the custom site configuration
 RUN a2ensite 000-default.conf
 
