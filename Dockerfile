@@ -6,6 +6,8 @@ RUN apt-get update && apt-get install -y \
     libpng-dev \
     libjpeg62-turbo-dev \
     libfreetype6-dev \
+    vim \
+    unzip \
     zip \
     git \
     && docker-php-ext-configure gd --with-freetype --with-jpeg \
@@ -25,7 +27,7 @@ COPY . /var/www/html
 
 # Set appropriate permissions for the Laravel directories
 RUN chown -R www-data:www-data /var/www/html \
-    && chmod -R 775 /var/www/html/storage /var/www/html/bootstrap/cache
+    && chmod -R 777 /var/www/html/storage /var/www/html/bootstrap/cache
 
 # Expose port 80 for Apache
 EXPOSE 80
